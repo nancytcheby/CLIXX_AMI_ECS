@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'RUNNER', defaultValue: 'Nancy', description: 'Runner name')
+    }
+
+    environment {
+        PATH = "${PATH}:${getTerraformPath()}"
+        AMI_ID = "stack-ami-${BUILD_NUMBER}"
+        VERSION = "1.0.${BUILD_NUMBER}"
+    }
+
+}
+
+    stages {
+
+        stage('Initial Stage') {
+            steps {
+                script {
+                    echo "Pipeline started by RUNNER = ${params.RUNNER}"
+
+                    input(
+                        id: 'confirm',
+                        message: "Start Pipeline? RUNNER = ${params.RUNNER}",
+                        ok: "Proceed"
+                    )
+                }
+            }
+        }
+    }
+
+        stage('Packer AMI Build') {
+    steps {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',
+                          credentialsId: 'AWS_CREDS_AUTOMATION_ACCT']]) {
+            slackSend (color: '#FFFF00', message: "STARTING PACKER IMAGE BUILD: Job '${params.RUNNER} ${env.RUNNER} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")               
+            sh """
+            echo "RUNNER: ${params.RUNNER}"
+            cd images
+            packer init -upgrade .
+            packer validate image.pkr.hcl
+            sed -i "s/ami-stack-[0-9]*/${AMI_ID}/" image.pkr.hcl
+            export PACKER_LOG=1
+            export PACKER_LOG_PATH=$WORKSPACE/packer.log
+            /usr/bin/packer build -force image.pkr.hcl
+            """
+        }
+    }
+}
+    
+
+
+
+
+
