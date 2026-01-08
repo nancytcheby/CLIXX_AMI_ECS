@@ -59,7 +59,7 @@ source "amazon-ebs" "amazon_ebs" {
     delete_on_termination = true
     device_name           = "/dev/xvda"
     encrypted             = false
-    volume_size           = 10
+    volume_size           = 30
     volume_type           = "gp2"
   }
 
