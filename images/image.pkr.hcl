@@ -35,7 +35,7 @@ locals {
 
 data "amazon-ami" "source_ami" {
   most_recent = true
-  owners      = ["818760291841","083587468058"]
+  owners      = ["amazon"]
 
   filters = {
     name                = var.aws_source_ami
