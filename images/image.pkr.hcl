@@ -7,7 +7,7 @@ variable "aws_instance_type" {
 }
 
 variable "ami_name" {
-  default = "ami-stack-14"
+  default = "ami-stack-14-ecs"
 }
 
 variable "component" {
@@ -26,6 +26,11 @@ variable "ami_regions" {
 
 variable "aws_region" {
   default = "us-east-1"
+}
+
+# Add timestamp for unique AMI names
+locals {
+  timestamp = formatdate("YYYYMMDD-HHmmss", timestamp())
 }
 
 data "amazon-ami" "source_ami" {
