@@ -38,9 +38,9 @@ data "amazon-ami" "source_ami" {
   owners      = ["818760291841","083587468058"]
 
   filters = {
-    name                = ${var.aws_source_ami}
+    name                = var.aws_source_ami
   }
-  region = ${var.aws_region}
+  region = var.aws_region
 }
 # ------------------------------------------------------------------------------------
 
