@@ -63,10 +63,9 @@ data "aws_subnets" "default" {
   }
 }
 
-# SSH key pair
-resource "aws_key_pair" "Stack_KP" {
-  key_name   = "stackkp"
-  public_key = file(var.PATH_TO_PUBLIC_KEY)
+# Use existing key pair (create manually once in AWS Console)
+data "aws_key_pair" "Stack_KP" {
+  key_name = "stackkp"
 }
 
 # Security Group
@@ -101,6 +100,11 @@ resource "aws_security_group" "sg_22_80" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = all
+  }
 }
 
 # Always use newest AMI created by Jenkins/Packer
@@ -121,7 +125,7 @@ resource "aws_instance" "application_server" {
   subnet_id                   = data.aws_subnets.default.ids[0]   
   vpc_security_group_ids      = [aws_security_group.sg_22_80.id]
   associate_public_ip_address = true
-  key_name                    = aws_key_pair.Stack_KP.key_name
+  key_name                    = data.aws_key_pair.Stack_KP.key_name
 
   tags = {
     Name = "Test_Instance"
