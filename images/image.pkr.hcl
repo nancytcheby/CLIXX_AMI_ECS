@@ -74,7 +74,7 @@ build {
   sources = ["source.amazon-ebs.amazon_ebs"]
 
   provisioner "shell" {
-    script = "../scripts/setup.sh"
+    script = "../scripts/ecs_setup.sh"
   }
 }
 
