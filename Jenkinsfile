@@ -37,6 +37,16 @@ pipeline {
              }
           }
 
+         stage('Inspector2 AMI Scan') {
+            steps {
+                 sh """
+                 chmod +x ./scripts/inspector_scan.sh
+                 ./scripts/inspector_scan.sh
+           """
+                  slackSend (color: '#FFFF00', message: "Inspector2 AMI Scan Complete: Job '${env.RUNNER} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    }
+}
+
         stage('Terraform init'){
             steps {
                 slackSend (color: '#FFFF00', message: "STARTING TERRAFORM DEPLOYMENT: Job '${env.RUNNER} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
